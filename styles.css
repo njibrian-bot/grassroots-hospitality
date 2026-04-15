@@ -208,7 +208,7 @@ ul { list-style: none; }
 }
 
 .nav-logo img {
-  height: 72px;
+  height: 100px;
   width: auto;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
@@ -216,7 +216,7 @@ ul { list-style: none; }
 }
 
 .navbar.scrolled .nav-logo img {
-  height: 60px;
+  height: 80px;
 }
 
 .nav-links {
@@ -1190,7 +1190,7 @@ ul { list-style: none; }
 }
 
 .footer-logo {
-  height: 72px;
+  height: 100px;
   width: auto;
   margin-bottom: 20px;
   image-rendering: -webkit-optimize-contrast;
