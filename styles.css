@@ -208,15 +208,15 @@ ul { list-style: none; }
 }
 
 .nav-logo img {
-  height: 52px;
+  height: 72px;
   width: auto;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
   transition: all var(--transition);
 }
 
 .navbar.scrolled .nav-logo img {
-  filter: none;
-  height: 44px;
+  height: 60px;
 }
 
 .nav-links {
@@ -1057,9 +1057,11 @@ ul { list-style: none; }
 }
 
 .footer-logo {
-  height: 52px;
+  height: 72px;
   width: auto;
   margin-bottom: 20px;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
   filter: brightness(0) invert(1);
   opacity: 0.85;
 }
