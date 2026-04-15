@@ -175,15 +175,61 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 
-// ---- Gallery lightbox (placeholder-ready) ----
-document.querySelectorAll('.gallery-item').forEach(item => {
-  item.addEventListener('click', () => {
-    // When real images are added, this can be upgraded to a full lightbox
-    const label = item.querySelector('span')?.textContent;
-    if (label) {
-      // Placeholder feedback — remove when real images are added
-      item.style.outline = '2px solid var(--teal)';
-      setTimeout(() => { item.style.outline = ''; }, 600);
-    }
+// ---- Gallery lightbox ----
+const galleryItems = Array.from(document.querySelectorAll('.gallery-item-full'));
+const lightbox      = document.getElementById('lightbox');
+const lightboxImg   = document.getElementById('lightboxImg');
+const lightboxClose = document.getElementById('lightboxClose');
+const lightboxPrev  = document.getElementById('lightboxPrev');
+const lightboxNext  = document.getElementById('lightboxNext');
+const lightboxCounter = document.getElementById('lightboxCounter');
+
+let currentIndex = 0;
+
+function openLightbox(index) {
+  currentIndex = index;
+  const img = galleryItems[index].querySelector('img');
+  lightboxImg.src = img.src;
+  lightboxImg.alt = img.alt;
+  lightboxCounter.textContent = `${index + 1} / ${galleryItems.length}`;
+  lightbox.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function showPrev() {
+  currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+  openLightbox(currentIndex);
+}
+
+function showNext() {
+  currentIndex = (currentIndex + 1) % galleryItems.length;
+  openLightbox(currentIndex);
+}
+
+galleryItems.forEach((item, i) => {
+  item.addEventListener('click', () => openLightbox(i));
+});
+
+if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+if (lightboxPrev)  lightboxPrev.addEventListener('click', showPrev);
+if (lightboxNext)  lightboxNext.addEventListener('click', showNext);
+
+// Close on background click
+if (lightbox) {
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
   });
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (!lightbox?.classList.contains('active')) return;
+  if (e.key === 'ArrowLeft')  showPrev();
+  if (e.key === 'ArrowRight') showNext();
+  if (e.key === 'Escape')     closeLightbox();
 });
