@@ -20,21 +20,31 @@ handleNavbarScroll(); // run on load
 
 
 // ---- Mobile nav toggle ----
-const navToggle = document.getElementById('navToggle');
-const navLinks  = document.getElementById('navLinks');
+const navToggle  = document.getElementById('navToggle');
+const navLinks   = document.getElementById('navLinks');
+const navOverlay = document.getElementById('navOverlay');
+
+function closeNav() {
+  navToggle.classList.remove('active');
+  navLinks.classList.remove('open');
+  if (navOverlay) navOverlay.classList.remove('open');
+}
 
 navToggle.addEventListener('click', () => {
-  navToggle.classList.toggle('active');
-  navLinks.classList.toggle('open');
+  const isOpen = navLinks.classList.toggle('open');
+  navToggle.classList.toggle('active', isOpen);
+  if (navOverlay) navOverlay.classList.toggle('open', isOpen);
 });
 
 // Close menu when a link is clicked
 navLinks.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    navToggle.classList.remove('active');
-    navLinks.classList.remove('open');
-  });
+  link.addEventListener('click', closeNav);
 });
+
+// Close menu when tapping the overlay (mobile)
+if (navOverlay) {
+  navOverlay.addEventListener('click', closeNav);
+}
 
 
 // ---- Active nav link on scroll ----
@@ -185,6 +195,7 @@ const lightboxNext  = document.getElementById('lightboxNext');
 const lightboxCounter = document.getElementById('lightboxCounter');
 
 let currentIndex = 0;
+let _scrollY = 0;
 
 function openLightbox(index) {
   currentIndex = index;
@@ -193,12 +204,22 @@ function openLightbox(index) {
   lightboxImg.alt = img.alt;
   lightboxCounter.textContent = `${index + 1} / ${galleryItems.length}`;
   lightbox.classList.add('active');
+  // iOS scroll lock: position:fixed prevents body bounce while keeping scroll position
+  _scrollY = window.scrollY;
   document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${_scrollY}px`;
+  document.body.style.width = '100%';
 }
 
 function closeLightbox() {
   lightbox.classList.remove('active');
+  // Restore iOS scroll position
   document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
+  window.scrollTo(0, _scrollY);
 }
 
 function showPrev() {
@@ -233,3 +254,24 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight') showNext();
   if (e.key === 'Escape')     closeLightbox();
 });
+
+// Touch swipe navigation for lightbox (Android & iOS)
+if (lightbox) {
+  let _touchStartX = 0;
+  let _touchStartY = 0;
+
+  lightbox.addEventListener('touchstart', (e) => {
+    _touchStartX = e.changedTouches[0].clientX;
+    _touchStartY = e.changedTouches[0].clientY;
+  }, { passive: true });
+
+  lightbox.addEventListener('touchend', (e) => {
+    const dx = _touchStartX - e.changedTouches[0].clientX;
+    const dy = _touchStartY - e.changedTouches[0].clientY;
+    // Only trigger if horizontal swipe is dominant and > 50px
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx > 0) showNext();
+      else showPrev();
+    }
+  }, { passive: true });
+}
