@@ -877,13 +877,7 @@ ul { list-style: none; }
 }
 
 .lightbox-counter {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255,255,255,0.5);
-  font-size: 0.78rem;
-  letter-spacing: 0.1em;
+  display: none;
 }
 
 @media (max-width: 900px) {
